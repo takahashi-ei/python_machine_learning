@@ -6,7 +6,7 @@
 # ロジスティック回帰は線形分離問題と2値分類問題に対する単純ながらより強力なアルゴリズムであり、回帰ではなく分類のモデル<br>
 # 但し、線形分離可能なクラスにのみ高い性能が発揮される.ロジスティック回帰を図にすると下記のとおり
 
-# In[3]:
+# In[4]:
 
 from IPython.display import Image
 Image(filename='./images/03_03.png', width=500) 
@@ -14,7 +14,7 @@ Image(filename='./images/03_03.png', width=500)
 
 # ### シグモイド関数
 
-# In[1]:
+# In[5]:
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,7 +63,7 @@ plt.show()
 # $
 # この関数は下のように正しく判別できた場合のコストは0になり、それ以外は無限大に向かう
 
-# In[5]:
+# In[6]:
 
 def cost_1(z):
     return - np.log(sigmoid(z))
@@ -91,9 +91,16 @@ plt.tight_layout()
 plt.show()
 
 
-# ### scikit-learningを使った実装
+# ### 実装
 
-# In[45]:
+# sklearn_modelを使った実装とSGDClassifierを使った実装がある<br>
+# sklearn_modelを使った実装だと高速化できるがデータセットが大きすぎてコンピュータのメモリに収まらないことがある<br>
+# SGDClassifierを使った実装だと、確率的勾配降下法アルゴリズムに似た実装がされている<br>
+# (オンライン学習についてもpartial_fitメソッドで対応している)
+
+# #### sklearn_modelを使った実装
+
+# In[12]:
 
 from sklearn.linear_model import LogisticRegression
 #ロジスティック回帰のインスタンスを生成
@@ -111,9 +118,41 @@ plt.legend(loc='upper left')
 plt.show()
 
 
+# In[15]:
+
+y_pred = lr.predict(X_test_std)
+print('Misclassified samples:%d' % (y_test != y_pred).sum())
+
+
+# #### SGDClassifierを使った実装
+
+# In[13]:
+
+from sklearn.linear_model import SGDClassifier
+#確率降下法バージョンのロジスティック回帰を生成
+sgd_lr = SGDClassifier(loss='log')
+#トレーニングデータをモデルに適合させる
+sgd_lr.fit(X_train_std,y_train)
+#決定境界をプロット
+plot_decision_regions(X_combined_std,y_combined,classifier=sgd_lr,test_idx=range(105,150))
+#軸のラベルを設定
+plt.xlabel('petal length[standardized]')
+plt.ylabel('petal width[standardized]')
+#凡例を設定
+plt.legend(loc='upper left')
+#グラフを表示
+plt.show()
+
+
+# In[16]:
+
+y_pred = sgd_lr.predict(X_test_std)
+print('Misclassified samples:%d' % (y_test != y_pred).sum())
+
+
 # ### その他の関数
 
-# In[46]:
+# In[9]:
 
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
@@ -154,7 +193,7 @@ def plot_decision_regions(X,y,classifier,test_idx=None,resolution=0.02):
             plt.scatter(X_test[:,0],X_test[:,1],c='',                         alpha=1.0,linewidths=1,marker='o',s=55,label='test set')
 
 
-# In[47]:
+# In[10]:
 
 #テストデータとトレインデータの分類
 #sklearnで用意されている関数を使って分類する
@@ -207,7 +246,7 @@ y_combined = np.hstack((y_train,y_test))
 
 # C（正則パラメータ）と重り係数の関係は下のように、正則化が増すと0に近づくようになる
 
-# In[48]:
+# In[11]:
 
 #空のリストを作成（重み係数、逆正則パラメータ）
 weights,params = [],[]

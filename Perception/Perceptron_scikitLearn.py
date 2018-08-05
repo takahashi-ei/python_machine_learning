@@ -1,7 +1,9 @@
 
 # coding: utf-8
 
-# In[3]:
+# # sklearnを使ったデータの分類と標準化
+
+# In[2]:
 
 #テストデータとトレインデータの分類
 #sklearnで用意されている関数を使って分類する
@@ -23,7 +25,7 @@ y = iris.target
 X_train,X_test,y_train,y_test = train_test_split(                                                X,y,test_size=0.3,random_state=0)
 
 
-# In[5]:
+# In[3]:
 
 #StandardScalerをつかって、トレーニングデータを標準化
 from sklearn.preprocessing import StandardScaler
@@ -36,7 +38,17 @@ X_train_std = sc.transform(X_train)
 X_test_std = sc.transform(X_test)
 
 
-# In[10]:
+# # 実装
+
+# 実装方法は2つある。<br>
+# linear_modelのパーセプトロンは高速に行えるがデータセットが大きすぎてコンピュータのメモリに収まらないことがある<br>
+# SGDClassifierメソッドのパーセプトロンは確率的勾配降下法のアルゴリズムのようになっている
+# (SGDClassifierはオンライン学習に対応していて、partial_fitが実装されている)
+
+# ## liner_modelのパーセプトロンの実装
+
+# In[4]:
+
 
 #用意されている関数でパーセプトロンのインスタンスを作成
 from sklearn.linear_model import Perceptron
@@ -47,14 +59,11 @@ ppn = Perceptron(n_iter=40,eta0=0.1,random_state=0,shuffle=True)
 #トレーニングデータをモデルに適合させる
 ppn.fit(X_train_std,y_train)
 
-
-# In[12]:
-
 y_pred = ppn.predict(X_test_std)
 print('Misclassified samples:%d' % (y_test != y_pred).sum())
 
 
-# In[31]:
+# In[7]:
 
 #トレーニングデータとテストデータの特徴量を行報告に結合
 X_combined_std = np.vstack((X_train_std,X_test_std))
@@ -73,9 +82,45 @@ plt.legend(loc='upper left')
 plt.show()
 
 
-# ### その他関数
+# ## SGDClassifierのPerceptronの実装
 
-# In[30]:
+# In[9]:
+
+#用意されている関数でパーセプトロンのインスタンスを作成
+from sklearn.linear_model import SGDClassifier
+
+#エポック数40,学習率0.1でパーセプトロンのインターフェイスを生成
+sgd_ppn = SGDClassifier(loss='perceptron')
+
+#トレーニングデータをモデルに適合させる
+sgd_ppn.fit(X_train_std,y_train)
+
+y_pred = sgd_ppn.predict(X_test_std)
+print('Misclassified samples:%d' % (y_test != y_pred).sum())
+
+
+# In[10]:
+
+#トレーニングデータとテストデータの特徴量を行報告に結合
+X_combined_std = np.vstack((X_train_std,X_test_std))
+#トレーニングデータとテストデータのクラスラベルを結合
+y_combined = np.hstack((y_train,y_test))
+
+#決定領域をプロット
+plot_decision_regions(X=X_combined_std,y=y_combined,classifier=sgd_ppn,test_idx=range(105,150))
+
+#軸のラベルの設定
+plt.xlabel('petal length[standardized]')
+plt.ylabel('petal width[standardized]')
+#凡例の設定（左上に配置）
+plt.legend(loc='upper left')
+#グラフを表示
+plt.show()
+
+
+# # その他関数
+
+# In[6]:
 
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
