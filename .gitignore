@@ -22,3 +22,11 @@ $RECYCLE.BIN/
 # Operating System Files
 # =========================
 .ipynb_checkpoints/ADALINE-checkpoint.ipynb
+writer/.ipynb_checkpoints/graph_writer-checkpoint.ipynb
+writer/__pycache__/graph_writer.cpython-35.pyc
+__pycache__/graph_writer.cpython-35.pyc
+__pycache__/Perceptron.cpython-35.pyc
+.ipynb_checkpoints/Perceptron-checkpoint.ipynb
+adaline/.ipynb_checkpoints/ADALINE-checkpoint.ipynb
+Perception/.ipynb_checkpoints/Perceptron-checkpoint.ipynb
+supportVectorMachine/.ipynb_checkpoints/supportVectorMachine-checkpoint.ipynb
